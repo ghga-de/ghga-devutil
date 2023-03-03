@@ -3,5 +3,4 @@
 
 config_schema.json
 example_config.yaml
-.github/workflows/check_config_docs.yaml
 .github/workflows/check_openapi_spec.yaml
