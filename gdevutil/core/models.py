@@ -126,15 +126,20 @@ class Storage(FrozenBaseModel):
     mongodb: Optional[bool] = False
 
 
-class Service(FrozenBaseModel):
-    """A service"""
+class BaseService(FrozenBaseModel):
+    """A base class for services"""
 
     shortname: str
     name: str
     summary: str
-    consumes: ConsumedInterface = ConsumedInterface()
-    produces: ProducedInterface = ProducedInterface()
     storage: Storage
+    consumes: ConsumedInterface = ConsumedInterface()
+
+
+class Service(BaseService):
+    """A service"""
+
+    produces: ProducedInterface = ProducedInterface()
 
 
 class ConfigVariable(FrozenBaseModel):
@@ -145,7 +150,7 @@ class ConfigVariable(FrozenBaseModel):
     value: Optional[str] = None
 
 
-class AnnotatedService(Service):
+class AnnotatedService(BaseService):
     """An annotated service."""
 
     config: List[ConfigVariable] = []

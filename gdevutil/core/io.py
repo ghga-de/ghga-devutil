@@ -18,13 +18,14 @@
 
 
 from pathlib import Path
+from typing import Union
 
 import yaml
 import yaml.parser
 from pydantic import ValidationError
 
 from gdevutil.core.exceptions import OutputFileExistsError, ServiceFileValidationError
-from gdevutil.core.models import Service
+from gdevutil.core.models import AnnotatedService, Service
 
 
 def load_service(path: Path) -> Service:
@@ -36,7 +37,9 @@ def load_service(path: Path) -> Service:
         raise ServiceFileValidationError(path, error) from None
 
 
-def write_service(service: Service, out_path: Path, force: bool = False) -> None:
+def write_service(
+    service: Union[Service, AnnotatedService], out_path: Path, force: bool = False
+) -> None:
     """Write a service to file"""
     if out_path.exists() and not force:
         raise OutputFileExistsError(out_path)
