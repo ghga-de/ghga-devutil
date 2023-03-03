@@ -29,7 +29,9 @@ def generate_markdown(
 ) -> str:
     """Generates markdown from service"""
     # Load jinja2 template
-    env = Environment(loader=PackageLoader("gdevutil"), autoescape=select_autoescape())
+    env = Environment(
+        loader=PackageLoader("ghga_devutil"), autoescape=select_autoescape()
+    )
     template = env.get_template("service_page.md.jinja2")
     template.globals["cur_time"] = lambda: datetime.now(tz=timezone.utc)
     template.globals["service_title"] = lambda service: service.name.replace(
