@@ -1,0 +1,14 @@
+#!/bin/bash
+# install service in dev container
+
+cd /workspace
+
+git config --global --add safe.directory /workspace
+
+# install in edit mode with testing dependencies
+pip install \
+    -e \
+    ".[all]"
+
+# install pre-commit hooks to git:
+pre-commit install
