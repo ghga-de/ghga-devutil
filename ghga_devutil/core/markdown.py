@@ -32,7 +32,7 @@ def generate_markdown(
     env = Environment(
         loader=PackageLoader("ghga_devutil"), autoescape=select_autoescape()
     )
-    template = env.get_template("service_page.md.jinja2")
+    template = env.get_template("service_page.md.jinja")
     template.globals["cur_time"] = lambda: datetime.now(tz=timezone.utc)
     template.globals["service_title"] = lambda service: service.name.replace(
         "-", " "
