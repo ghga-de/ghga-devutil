@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Short description of package"""  # Please adapt to package
+"""The gdevutil package provides the functionality required for the gdevutil
+command line utility."""
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"

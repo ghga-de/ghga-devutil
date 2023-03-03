@@ -1,0 +1,63 @@
+{% set service = services[service_key] -%}
+---
+title: "{{ service_title(service) }}"
+date: {{ cur_time() }}
+draft: false
+service_name: "{{ service.name }}"
+---
+
+
+# {{ service_title(service) }}
+
+[ghga-de/{{ service.name }}](https://github.com/ghga-de/{{ service.name }})
+
+[ghga/{{ service.name }}](https://hub.docker.com/r/ghga/{{ service.name }})
+
+## Summary
+
+{{ service.summary }}
+
+## Provided
+
+### REST API
+
+This service provides a REST API with the following endpoints:
+
+| Method | Path | Consumers |
+| --- | --- | --- |
+{% for endpoint in service.produces.rest_endpoints %}| `{{ endpoint.method }}` | `{{ endpoint.path}}` | {% for consumer in endpoint.consumers %} [{{service_title(services[consumer])}}](../{{ services[consumer].shortname }})<br>{%endfor%} |
+{% endfor %}
+
+### Events
+
+This service publishes the following event types through a message broker:
+
+| Topic | Type | Consumers |
+| --- | --- | --- |
+{% for event in service.produces.events %}| `{{ event.topic }}` | `{{ event.type }}` | {% for consumer in event.consumers %} [{{ service_title(services[consumer]) }}](../{{ services[consumer].shortname }})<br>{%endfor%} |
+{% endfor %}
+
+## Consumed
+
+### REST API
+
+This service relies on the following REST endpoints:
+
+| Service | Method | Path |
+| --- | --- | --- |
+{% for endpoint in service.consumes.rest_endpoints %}| `{{ endpoint.service }}` | `{{ endpoint.path}}` | `{{ endpoint.method }}` |
+{% endfor %}
+
+### Events
+
+This service consumes the following events through the message broker:
+
+
+## Configuration
+
+The service can be configured using the following configuration variables:
+
+| Name | Description |
+| --- | --- |
+{% for config in service.config %}| `{{ config.name }}` | {{ config.description }} |
+{% endfor %}
