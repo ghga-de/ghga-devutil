@@ -19,9 +19,9 @@
 from pathlib import Path
 from typing import List
 
-from gdevutil.core.annotate import annotate_services
-from gdevutil.core.io import load_service, write_service
-from gdevutil.core.markdown import generate_markdown
+from ghga_devutil.core.annotate import annotate_services
+from ghga_devutil.core.io import load_service, write_service
+from ghga_devutil.core.markdown import generate_markdown
 
 
 def markdown(service_file_paths: List[Path], outdir: Path, force: bool):

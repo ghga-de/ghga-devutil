@@ -21,7 +21,7 @@ from typing import Mapping
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from gdevutil.core.models import AnnotatedService
+from ghga_devutil.core.models import AnnotatedService
 
 
 def generate_markdown(

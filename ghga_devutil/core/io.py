@@ -24,8 +24,11 @@ import yaml
 import yaml.parser
 from pydantic import ValidationError
 
-from gdevutil.core.exceptions import OutputFileExistsError, ServiceFileValidationError
-from gdevutil.core.models import AnnotatedService, Service
+from ghga_devutil.core.exceptions import (
+    OutputFileExistsError,
+    ServiceFileValidationError,
+)
+from ghga_devutil.core.models import AnnotatedService, Service
 
 
 def load_service(path: Path) -> Service:

@@ -20,9 +20,9 @@ from typing import List
 
 import typer
 
-from gdevutil import core
-from gdevutil.core import cli_message as msg
-from gdevutil.core.exceptions import ServiceFileValidationError
+from ghga_devutil import core
+from ghga_devutil.core import cli_message as msg
+from ghga_devutil.core.exceptions import ServiceFileValidationError
 
 cli = typer.Typer()
 

@@ -15,7 +15,7 @@
 
 """Entrypoint of the package"""
 
-from gdevutil.cli import cli
+from ghga_devutil.cli import cli
 
 if __name__ == "__main__":
     cli()
