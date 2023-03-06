@@ -118,12 +118,26 @@ class S3Storage(FrozenBaseModel):
     mode: AccessMode
 
 
+class MongoDBStorage(FrozenBaseModel):
+    """A MongoDB storage"""
+
+    db: str
+    mode: AccessMode
+
+
+class VaultStorage(FrozenBaseModel):
+    """A Vault Storage"""
+
+    path: str
+    mode: AccessMode
+
+
 class Storage(FrozenBaseModel):
     """A Storage"""
 
-    vault: Optional[bool] = False
-    s3: Optional[List[S3Storage]] = []
-    mongodb: Optional[bool] = False
+    vault: List[VaultStorage] = []
+    s3: List[S3Storage] = []
+    mongodb: List[MongoDBStorage] = []
 
 
 class BaseService(FrozenBaseModel):
