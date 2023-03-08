@@ -25,7 +25,7 @@ This service provides a REST API with the following endpoints:
 
 | Method | Path | Consumers |
 | --- | --- | --- |
-{% for endpoint in service.produces.rest_endpoints %}| `{{ endpoint.method }}` | `{{ endpoint.path}}` | {% for consumer in endpoint.consumers %} [{{service_title(services[consumer])}}](../{{ services[consumer].shortname }})<br>{%endfor%} |
+{% for endpoint in service.api.rest.produces %}| `{{ endpoint.method }}` | `{{ endpoint.path}}` | {% for consumer in endpoint.consumers %} [{{service_title(services[consumer])}}](../{{ services[consumer].shortname }})<br>{%endfor%} |
 {% endfor %}
 
 ### Events
@@ -34,7 +34,7 @@ This service publishes the following event types through a message broker:
 
 | Topic | Type | Consumers |
 | --- | --- | --- |
-{% for event in service.produces.events %}| `{{ event.topic }}` | `{{ event.type }}` | {% for consumer in event.consumers %} [{{ service_title(services[consumer]) }}](../{{ services[consumer].shortname }})<br>{%endfor%} |
+{% for event in service.api.events.produces %}| `{{ event.topic }}` | `{{ event.type }}` | {% for consumer in event.consumers %} [{{ service_title(services[consumer]) }}](../{{ services[consumer].shortname }})<br>{%endfor%} |
 {% endfor %}
 
 ## Consumed
@@ -45,12 +45,17 @@ This service relies on the following REST endpoints:
 
 | Service | Method | Path |
 | --- | --- | --- |
-{% for endpoint in service.consumes.rest_endpoints %}| `{{ endpoint.service }}` | `{{ endpoint.path}}` | `{{ endpoint.method }}` |
+{% for endpoint in service.api.rest.consumes %}| `{{ endpoint.service }}` | `{{ endpoint.path}}` | `{{ endpoint.method }}` |
 {% endfor %}
 
 ### Events
 
 This service consumes the following events through the message broker:
+
+| Topic | Type |
+| --- | --- |
+{% for event in service.api.events.consumes %}| `{{ event.topic }}` | `{{ event.type }}` |
+{% endfor %}
 
 
 ## Configuration

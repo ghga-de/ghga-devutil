@@ -22,7 +22,7 @@ from typing import List, Mapping, Tuple
 
 from .io import load_service, write_service
 from .models import (
-    AnnotatedEvent,
+    AnnotatedConfiguredEvent,
     AnnotatedRESTEndpoint,
     AnnotatedService,
     ConfigVariable,
@@ -43,20 +43,20 @@ def annotate_rest_consumers(
                 ConsumedRESTEndpoint(**rest_endpoint.dict(), service=service.shortname)
             ],
         )
-        for rest_endpoint in service.produces.rest_endpoints
+        for rest_endpoint in service.api.rest.produces
     ]
 
 
 def annotate_event_consumers(
     service: Service, event_consumers: Mapping[Event, List[str]]
-) -> List[AnnotatedEvent]:
+) -> List[AnnotatedConfiguredEvent]:
     """Produces a list of events with their respective consumers annotated."""
     return [
-        AnnotatedEvent(
+        AnnotatedConfiguredEvent(
             **event.dict(),
             consumers=event_consumers[Event(topic=event.topic, type=event.type)],
         )
-        for event in service.produces.events
+        for event in service.api.events.produces
     ]
 
 
@@ -65,7 +65,7 @@ def annotate_service_config(service: Service) -> List[ConfigVariable]:
     config: List[ConfigVariable] = []
 
     # Does the service provide a REST API?
-    if service.produces.rest_endpoints:
+    if service.api.rest.produces:
         config.append(
             ConfigVariable(
                 name="host",
@@ -79,7 +79,7 @@ def annotate_service_config(service: Service) -> List[ConfigVariable]:
         )
 
     # Does the service consume or produce events through a message broker?
-    if service.produces.events or service.consumes.events:
+    if service.api.events.produces or service.api.events.consumes:
         config.append(
             ConfigVariable(
                 name="kafka_servers",
@@ -88,7 +88,7 @@ def annotate_service_config(service: Service) -> List[ConfigVariable]:
         )
 
     # Add configuration values for every kafka event
-    for event in set(service.produces.events + service.consumes.events):
+    for event in set(service.api.events.produces + service.api.events.consumes):
         config.append(
             ConfigVariable(
                 name=f"{event.config}_topic", description="An Apache Kafka event topic"
@@ -135,11 +135,11 @@ def annotate_service(
     """Annotates a service"""
     service_dict = service.dict()
 
-    service_dict["produces"]["events"] = annotate_event_consumers(
+    service_dict["api"]["events"]["produces"] = annotate_event_consumers(
         service=service, event_consumers=event_consumers
     )
 
-    service_dict["produces"]["rest_endpoints"] = annotate_rest_consumers(
+    service_dict["api"]["rest"]["produces"] = annotate_rest_consumers(
         service=service, rest_consumers=rest_consumers
     )
 
@@ -157,10 +157,10 @@ def enumerate_consumers(services: List[Service]) -> Tuple:
     event_consumers: Mapping[Event, List[str]] = defaultdict(list)
 
     for service in services:
-        for rest_endpoint in service.consumes.rest_endpoints:
+        for rest_endpoint in service.api.rest.consumes:
             rest_consumers[rest_endpoint].append(service.shortname)
 
-        for event in service.consumes.events:
+        for event in service.api.events.consumes:
             event_consumers[Event(topic=event.topic, type=event.type)].append(
                 service.shortname
             )

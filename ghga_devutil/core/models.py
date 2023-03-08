@@ -39,11 +39,11 @@ class Event(FrozenBaseModel):
     type: str
 
 
-class ConfiguredEvent(Event):
-    """An event that is annotated with the corresponding configuration key for a
-    particular service"""
+class ServiceEvent(Event):
+    """An event with additional service-specific information"""
 
     config: str
+    description: str
 
 
 class HTTPMethod(str, Enum):
@@ -70,7 +70,7 @@ class ConsumedRESTEndpoint(RESTEndpoint):
     service: str
 
 
-class AnnotatedEvent(ConfiguredEvent):
+class AnnotatedConfiguredEvent(ServiceEvent):
     """Annotated Event"""
 
     consumers: List[str] = []
@@ -82,28 +82,7 @@ class AnnotatedRESTEndpoint(RESTEndpoint):
     consumers: List[str] = []
 
 
-class ConsumedInterface(FrozenBaseModel):
-    """A collection of incoming service interfaces"""
-
-    events: List[ConfiguredEvent] = []
-    rest_endpoints: List[ConsumedRESTEndpoint] = []
-
-
-class ProducedInterface(FrozenBaseModel):
-    """A collection of outgoing service interfaces"""
-
-    events: List[ConfiguredEvent] = []
-    rest_endpoints: List[RESTEndpoint] = []
-
-
-class AnnotatedProducedInterface(FrozenBaseModel):
-    """A collection of annotated outgoing service interfaces"""
-
-    events: List[AnnotatedEvent] = []
-    rest_endpoints: List[AnnotatedRESTEndpoint] = []
-
-
-class AccessMode(str, Enum):
+class RWRwAccessMode(str, Enum):
     """Access mode"""
 
     READ = "read"
@@ -111,25 +90,32 @@ class AccessMode(str, Enum):
     READ_WRITE = "read-write"
 
 
+class RRwAccessMode(str, Enum):
+    """Access mode"""
+
+    READ = "read"
+    READ_WRITE = "read-write"
+
+
 class S3Storage(FrozenBaseModel):
     """An S3 storage"""
 
     bucket: str
-    mode: AccessMode
+    mode: RWRwAccessMode
 
 
 class MongoDBStorage(FrozenBaseModel):
     """A MongoDB storage"""
 
-    db: str
-    mode: AccessMode
+    db_name: str
+    mode: RRwAccessMode
 
 
 class VaultStorage(FrozenBaseModel):
     """A Vault Storage"""
 
     path: str
-    mode: AccessMode
+    mode: RRwAccessMode
 
 
 class Storage(FrozenBaseModel):
@@ -140,6 +126,56 @@ class Storage(FrozenBaseModel):
     mongodb: List[MongoDBStorage] = []
 
 
+class BaseRESTInterface(FrozenBaseModel):
+    """A base REST interface"""
+
+    consumes: List[ConsumedRESTEndpoint] = []
+
+
+class RESTInterface(BaseRESTInterface):
+    """A REST Interface"""
+
+    produces: List[RESTEndpoint] = []
+
+
+class AnnotatedRESTInterface(BaseRESTInterface):
+    """A consumer-annotated REST Interface"""
+
+    produces: List[AnnotatedRESTEndpoint] = []
+
+
+class BaseEventInterface(FrozenBaseModel):
+    """A base event interface"""
+
+    consumes: List[ServiceEvent] = []
+
+
+class EventInterface(BaseEventInterface):
+    """An event interface"""
+
+    produces: List[ServiceEvent] = []
+
+
+class AnnotatedEventInterface(BaseEventInterface):
+    """A consumer-annotated event interface"""
+
+    produces: List[AnnotatedConfiguredEvent] = []
+
+
+class API(FrozenBaseModel):
+    """An API"""
+
+    rest: RESTInterface = RESTInterface()
+    events: EventInterface = EventInterface()
+
+
+class AnnotatedAPI(FrozenBaseModel):
+    """A consumer-annotated API"""
+
+    rest: AnnotatedRESTInterface = AnnotatedRESTInterface()
+    events: AnnotatedEventInterface = AnnotatedEventInterface()
+
+
 class BaseService(FrozenBaseModel):
     """A base class for services"""
 
@@ -147,13 +183,12 @@ class BaseService(FrozenBaseModel):
     name: str
     summary: str
     storage: Storage
-    consumes: ConsumedInterface = ConsumedInterface()
 
 
 class Service(BaseService):
     """A service"""
 
-    produces: ProducedInterface = ProducedInterface()
+    api: API = API()
 
 
 class ConfigVariable(FrozenBaseModel):
@@ -168,4 +203,4 @@ class AnnotatedService(BaseService):
     """An annotated service."""
 
     config: List[ConfigVariable] = []
-    produces: AnnotatedProducedInterface = AnnotatedProducedInterface()
+    api: AnnotatedAPI = AnnotatedAPI()
