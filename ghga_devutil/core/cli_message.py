@@ -12,10 +12,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-"""Test dummy."""
+"""Command line message functionality."""
+
+from typing import Union
+
+from rich.console import Console
+
+console = Console(stderr=False)
+err_console = Console(stderr=True)
 
 
-def test_dummy():
-    """Just makes the CI pass."""
-    assert True
+def err(message: Union[str, BaseException]) -> None:
+    """Print an error message."""
+    err_console.print(message, style="red")
+
+
+def info(message: str) -> None:
+    """Print an info message."""
+    console.print(message, style="white")
+
+
+def warn(message: str) -> None:
+    """Print a warning message"""
+    err_console.print(message, style="yellow")

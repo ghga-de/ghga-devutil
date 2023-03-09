@@ -13,4 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Subpackage defining a RESTful API"""
+"""Entrypoint of the package"""
+
+from ghga_devutil.cli import cli
+
+if __name__ == "__main__":
+    cli()
