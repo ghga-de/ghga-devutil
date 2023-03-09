@@ -36,10 +36,8 @@ def test_enumerate_consumers(
         services=[service_a, service_b]
     )
 
-    assert rest_consumers == {
-        service_a_consumed_rest_endpoint: [service_b.shortname]  # type: ignore
-    }
-    assert event_consumers == {service_a_event: [service_b.shortname]}  # type: ignore
+    assert rest_consumers == {service_a_consumed_rest_endpoint: [service_b.shortname]}
+    assert event_consumers == {service_a_event: [service_b.shortname]}
 
 
 def test_annotate_service_config(
