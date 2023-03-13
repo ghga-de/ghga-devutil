@@ -35,9 +35,21 @@ from ghga_devutil.core.models import (
 
 
 @pytest.fixture
+def services(service_a: Service, service_b: Service):
+    """A list of services"""
+    return [service_a, service_b]
+
+
+@pytest.fixture
 def service_a_event():
     """An event published by service A"""
     return Event(topic="topic_a", type="type_a")
+
+
+@pytest.fixture
+def service_b_event():
+    """An event published by service B"""
+    return Event(topic="topic_b", type="type_b")
 
 
 @pytest.fixture

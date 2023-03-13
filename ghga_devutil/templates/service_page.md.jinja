@@ -52,9 +52,9 @@ This service relies on the following REST endpoints:
 
 This service consumes the following events through the message broker:
 
-| Topic | Type |
-| --- | --- |
-{% for event in service.api.events.consumes %}| `{{ event.topic }}` | `{{ event.type }}` |
+| Topic | Type | Producers |
+| --- | --- | --- |
+{% for event in service.api.events.consumes %}| `{{ event.topic }}` | `{{ event.type }}` | {% for producer in event.producers %} [{{ service_title(services[producer]) }}](../{{ services[producer].shortname }})<br>{%endfor%} |
 {% endfor %}
 
 

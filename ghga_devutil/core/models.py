@@ -70,6 +70,12 @@ class ConsumedRESTEndpoint(RESTEndpoint):
     service: str
 
 
+class ConsumedConfiguredEvent(ServiceEvent):
+    """Consumed Events."""
+
+    producers: List[str] = []
+
+
 class AnnotatedConfiguredEvent(ServiceEvent):
     """Annotated Event"""
 

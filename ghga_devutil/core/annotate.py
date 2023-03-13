@@ -26,6 +26,7 @@ from .models import (
     AnnotatedRESTEndpoint,
     AnnotatedService,
     ConfigVariable,
+    ConsumedConfiguredEvent,
     ConsumedRESTEndpoint,
     Event,
     Service,
@@ -57,6 +58,19 @@ def annotate_event_consumers(
             consumers=event_consumers[Event(topic=event.topic, type=event.type)],
         )
         for event in service.api.events.produces
+    ]
+
+
+def annotate_event_producers(
+    service: Service, event_producers: Mapping[Event, List[str]]
+) -> List[ConsumedConfiguredEvent]:
+    """Produces a list of consumed events with their respective producers annotated."""
+    return [
+        ConsumedConfiguredEvent(
+            **event.dict(),
+            producers=event_producers[Event(topic=event.topic, type=event.type)],
+        )
+        for event in service.api.events.consumes
     ]
 
 
@@ -131,12 +145,17 @@ def annotate_service(
     service: Service,
     rest_consumers: Mapping[ConsumedRESTEndpoint, List[str]],
     event_consumers: Mapping[Event, List[str]],
+    event_producers: Mapping[Event, List[str]],
 ) -> AnnotatedService:
     """Annotates a service"""
     service_dict = service.dict()
 
     service_dict["api"]["events"]["produces"] = annotate_event_consumers(
         service=service, event_consumers=event_consumers
+    )
+
+    service_dict["api"]["events"]["consumes"] = annotate_event_producers(
+        service=service, event_producers=event_producers
     )
 
     service_dict["api"]["rest"]["produces"] = annotate_rest_consumers(
@@ -168,12 +187,26 @@ def enumerate_consumers(services: List[Service]) -> Tuple:
     return rest_consumers, event_consumers
 
 
+def enumerate_producers(services: List[Service]) -> Mapping[Event, List[str]]:
+    """Generates a map enumerating all producers for all events."""
+    event_producers: Mapping[Event, List[str]] = defaultdict(list)
+
+    for service in services:
+        for event in service.api.events.produces:
+            event_producers[Event(topic=event.topic, type=event.type)].append(
+                service.shortname
+            )
+
+    return event_producers
+
+
 def annotate_services(services: List[Service]) -> List[AnnotatedService]:
     """Returns a list of annotated services based on a list of services."""
     rest_consumers, event_consumers = enumerate_consumers(services)
+    event_producers = enumerate_producers(services)
 
     ann_services = [
-        annotate_service(service, rest_consumers, event_consumers)
+        annotate_service(service, rest_consumers, event_consumers, event_producers)
         for service in services
     ]
 
