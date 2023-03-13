@@ -12,8 +12,8 @@ An extensive documentation can be found [here](...) (coming soon).
 ### Installation
 
 ```bash
-# Install via pip
-pip install ghga-devutil
+# Install latest main via pip
+pip install git+https://github.com/ghga-de/ghga-devutil@main
 
 # Get help
 gdevutil --help
