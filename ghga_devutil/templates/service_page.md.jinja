@@ -21,6 +21,7 @@ service_name: "{{ service.name }}"
 
 ### REST API
 
+{% if service.api.rest.produces|length > 0 %}
 This service provides a REST API with the following endpoints:
 
 | Method | Path | Consumers |
@@ -28,8 +29,15 @@ This service provides a REST API with the following endpoints:
 {% for endpoint in service.api.rest.produces %}| `{{ endpoint.method }}` | `{{ endpoint.path}}` | {% for consumer in endpoint.consumers %} [{{service_title(services[consumer])}}](../{{ services[consumer].shortname }})<br>{%endfor%} |
 {% endfor %}
 
+{% include "mermaid/rest_produces.md.jinja" %}
+
+{% else %}
+This service provides no REST API endpoints
+{% endif %}
+
 ### Events
 
+{% if service.api.events.produces|length > 0 %}
 This service publishes the following event types through a message broker:
 
 | Topic | Type | Consumers |
@@ -37,10 +45,17 @@ This service publishes the following event types through a message broker:
 {% for event in service.api.events.produces %}| `{{ event.topic }}` | `{{ event.type }}` | {% for consumer in event.consumers %} [{{ service_title(services[consumer]) }}](../{{ services[consumer].shortname }})<br>{%endfor%} |
 {% endfor %}
 
+{% include "mermaid/event_produces.md.jinja" %}
+
+{% else %}
+This service publishes no events through a message broker
+{% endif %}
+
 ## Consumed
 
 ### REST API
 
+{% if service.api.rest.consumes|length > 0 %}
 This service relies on the following REST endpoints:
 
 | Service | Method | Path |
@@ -48,8 +63,15 @@ This service relies on the following REST endpoints:
 {% for endpoint in service.api.rest.consumes %}| `{{ endpoint.service }}` | `{{ endpoint.path}}` | `{{ endpoint.method }}` |
 {% endfor %}
 
+{% include "mermaid/rest_consumes.md.jinja" %}
+
+{% else %}
+This service not relies on any REST endpoints
+{% endif %}
+
 ### Events
 
+{% if service.api.events.consumes|length > 0 %}
 This service consumes the following events through the message broker:
 
 | Topic | Type |
@@ -57,6 +79,11 @@ This service consumes the following events through the message broker:
 {% for event in service.api.events.consumes %}| `{{ event.topic }}` | `{{ event.type }}` |
 {% endfor %}
 
+{% include "mermaid/event_consumes.md.jinja" %}
+
+{% else %}
+This service consumes no events through the message broker
+{% endif %}
 
 ## Configuration
 

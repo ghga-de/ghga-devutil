@@ -1,0 +1,27 @@
+{% if has_any_consumer(service.api.events.produces) %}
+
+{% raw %}{{< mermaid >}}{% endraw %}
+
+flowchart LR
+
+    {% for topic in topics(service.api.events.produces) %}
+        {{service.shortname}}({{service_title(service)}}):::srcClass --- {{service.shortname}}_{{topic}}[[{{topic}}]]
+    {% endfor %}
+
+    {% for event in service.api.events.produces %}
+
+        {% for consumer in event.consumers %}
+            {{service.shortname}}_{{event.topic}}[[{{event.topic}}]] -. "{{event.type}}" .-> {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
+        {%endfor%}
+
+        subgraph c1 [consumers]
+        {% for consumer in event.consumers %}
+            {{services[consumer].shortname}}({{service_title(services[consumer])}})
+        {%endfor%}
+        end
+    {% endfor %}
+
+classDef srcClass fill:#00393F,color:#ffffff
+{% raw %}{{</ mermaid >}}{% endraw %}
+
+{% endif %}

@@ -1,0 +1,59 @@
+---
+title: "Service Communications"
+draft: false
+weight: 1
+---
+
+# Events
+
+The diagram summarizes the event-base communication between all microservices. Kafka is used as the message broker.
+
+
+{% raw %}{{< mermaid >}}{% endraw %}
+
+%%{ init: { 'flowchart': { 'curve': 'cardinal' } } }%%
+
+flowchart TB
+{% for service in services %}
+    {% set service = services[service] -%}
+    {% if service.api.events.produces|length > 0 %}
+        {% for topic in topics(service.api.events.produces) %}
+            {{service.shortname}}({{service_title(service)}}):::srcClass --- {{service.shortname}}_{{topic}}[[{{topic}}]]
+        {% endfor %}
+        {% for event in service.api.events.produces %}
+            {% for consumer in event.consumers %}
+                {{service.shortname}}_{{event.topic}}[[{{event.topic}}]] -. "{{event.type}}" .-> {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
+            {%endfor%}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+classDef srcClass fill:#00393F,color:#ffffff
+{% raw %}{{</ mermaid >}}{% endraw %}
+
+
+# REST API
+
+The diagram summarizes the REST API communication between all microservices.
+
+{% raw %}{{< mermaid >}}{% endraw %}
+
+%%{ init: { 'flowchart': { 'curve': 'cardinal' } } }%%
+
+flowchart LR
+{% for service in services %}
+    {% set service = services[service] -%}
+    {% if service.api.rest.produces|length > 0 %}
+        {% for endpoint in service.api.rest.produces %}
+            {% if endpoint.consumers|length > 0 %}
+                {{service.shortname}}({{service_title(service)}}):::srcClass --- {{service.shortname}}_{{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]]
+                {% for consumer in endpoint.consumers %}
+                    {{service.shortname}}_{{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]] -. "{{endpoint.method}}" .-> {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
+                {%endfor%}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+classDef srcClass fill:#00393F,color:#ffffff
+{% raw %}{{</ mermaid >}}{% endraw %}

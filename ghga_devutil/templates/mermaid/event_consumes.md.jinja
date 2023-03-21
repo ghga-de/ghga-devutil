@@ -1,0 +1,21 @@
+{% raw %}{{< mermaid >}}{% endraw %}
+
+%%{ init: { 'flowchart': { 'curve': 'cardinal' } } }%%
+
+flowchart LR
+    {% for topic in topics(service.api.events.consumes) %}
+        todo(TODO):::srcClass --- {{service.shortname}}_{{topic}}[[{{topic}}]]
+    {% endfor %}
+
+    {% for event in service.api.events.consumes %}
+        {{service.shortname}}_{{event.topic}}[[{{event.topic}}]] -. "{{event.type}}" .-> {{service.shortname}}({{service_title(service)}}):::srcClass
+    {% endfor %}
+
+    subgraph c1 [producers]
+    {% for endpoint in service.api.events.consumes %}
+        todo(TODO):::srcClass
+    {% endfor %}
+    end
+
+classDef srcClass fill:#00393F,color:#ffffff
+{% raw %}{{</ mermaid >}}{% endraw %}

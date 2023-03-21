@@ -1,0 +1,26 @@
+{% if has_any_consumer(service.api.rest.produces) %}
+
+{% raw %}{{< mermaid >}}{% endraw %}
+
+%%{ init: { 'flowchart': { 'curve': 'cardinal' } } }%%
+flowchart LR
+
+    {% for endpoint in service.api.rest.produces %}
+
+        {% for consumer in endpoint.consumers %}
+            {{service.shortname}}({{service_title(service)}}):::srcClass --- {{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]]
+            {{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]] -. "{{endpoint.method}}" .-> {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
+        {%endfor%}
+
+        subgraph c1 [consumers]
+        {% for consumer in endpoint.consumers %}
+            {{services[consumer].shortname}}({{service_title(services[consumer])}})
+        {%endfor%}
+        end
+
+    {% endfor %}
+
+classDef srcClass fill:#00393F,color:#ffffff
+{% raw %}{{</ mermaid >}}{% endraw %}
+
+{% endif %}

@@ -1,0 +1,19 @@
+{% raw %}{{< mermaid >}}{% endraw %}
+
+%%{ init: { 'flowchart': { 'curve': 'cardinal' } } }%%
+
+flowchart LR
+
+    {% for endpoint in service.api.rest.consumes %}
+        {{endpoint.service}}({{service_title(services[endpoint.service])}}):::srcClass --- {{service.api.rest.consumes.index(endpoint)}}[["{{endpoint.path}}"]]
+        {{service.api.rest.consumes.index(endpoint)}}[["{{endpoint.path}}"]] -. "{{endpoint.method}}" .-> {{service.shortname}}({{service_title(service)}}):::srcClass
+    {% endfor %}
+
+    subgraph c1 [producers]
+    {% for endpoint in service.api.rest.consumes %}
+        {{endpoint.service}}({{service_title(services[endpoint.service])}})
+    {% endfor %}
+    end
+
+classDef srcClass fill:#00393F,color:#ffffff
+{% raw %}{{</ mermaid >}}{% endraw %}
