@@ -2,3 +2,4 @@
 # but are allowed to have different content in the current repository
 
 .github/workflows/check_config_docs.yaml
+.github/workflows/check_openapi_spec.yaml
