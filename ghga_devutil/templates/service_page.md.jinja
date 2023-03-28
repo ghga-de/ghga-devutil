@@ -23,7 +23,7 @@ service_name: "{{ service.name }}"
 
 This service provides a REST API with the following endpoints:
 
-[Open in Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ghga-de/{{ service.name }}/{{ service.version }}/openapi.yaml)
+[Open in Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ghga-de/{{ service.name }}/{{ transform_tag(service.version) }}/openapi.yaml)
 
 | Method | Path | Consumers |
 | --- | --- | --- |
