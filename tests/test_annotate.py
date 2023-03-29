@@ -16,7 +16,12 @@
 
 from typing import List
 
-from ghga_devutil.core.annotate import annotate_service_config, enumerate_consumers
+from ghga_devutil.core.annotate import (
+    annotate_event_producers,
+    annotate_service_config,
+    enumerate_consumers,
+    enumerate_producers,
+)
 from ghga_devutil.core.models import (
     ConfigVariable,
     ConsumedRESTEndpoint,
@@ -38,6 +43,43 @@ def test_enumerate_consumers(
 
     assert rest_consumers == {service_a_consumed_rest_endpoint: [service_b.shortname]}
     assert event_consumers == {service_a_event: [service_b.shortname]}
+
+
+def test_enumerate_producers(
+    service_a: Service,
+    service_a_event: Event,
+    service_b: Service,
+    service_b_event: Event,
+):
+    """Test whether service event producers are enumerated correctly"""
+    event_producers = enumerate_producers(services=[service_a, service_b])
+
+    assert event_producers == {
+        service_a_event: [service_a.shortname],
+        service_b_event: [service_b.shortname],
+    }
+
+
+def test_annotate_event_producers(
+    services: List[Service],
+    service_a: Service,
+    service_a_event: Event,
+    service_b: Service,
+):
+    """Test whether the consumed event producers annotated correctly"""
+    event_producers = enumerate_producers(services=[service_a, service_b])
+
+    annotated_consumed_events_service_a = annotate_event_producers(
+        service=service_a, event_producers=event_producers
+    )
+
+    assert annotated_consumed_events_service_a == []
+
+    annotated_consumed_events_service_b = annotate_event_producers(
+        service=service_b, event_producers=event_producers
+    )
+
+    assert annotated_consumed_events_service_b[0].producers == [service_a.shortname]
 
 
 def test_annotate_service_config(
