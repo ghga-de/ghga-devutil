@@ -15,10 +15,13 @@ flowchart LR
         subgraph c1 [consumers]
         {% for consumer in endpoint.consumers %}
             {{services[consumer].shortname}}({{service_title(services[consumer])}})
+            click {{services[consumer].shortname}} "../{{services[consumer].shortname}}"
         {%endfor%}
         end
 
     {% endfor %}
+
+    click {{service.shortname}} "../{{ service.shortname }}"
 
 classDef srcClass fill:#00393F,color:#ffffff
 {% raw %}{{</ mermaid >}}{% endraw %}

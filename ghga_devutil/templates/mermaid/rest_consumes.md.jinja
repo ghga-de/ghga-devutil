@@ -12,8 +12,11 @@ flowchart LR
     subgraph c1 [producers]
     {% for endpoint in service.api.rest.consumes %}
         {{endpoint.service}}({{service_title(services[endpoint.service])}})
+        click {{endpoint.service}} "../{{ services[endpoint.service].shortname }}"
     {% endfor %}
     end
+
+    click {{service.shortname}} "../{{ service.shortname }}"
 
 classDef srcClass fill:#00393F,color:#ffffff
 {% raw %}{{</ mermaid >}}{% endraw %}

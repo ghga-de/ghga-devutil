@@ -26,6 +26,7 @@ flowchart TB
             {%endfor%}
         {% endfor %}
     {% endif %}
+    click {{service.shortname}} "../{{ service.shortname }}"
 {% endfor %}
 
 classDef srcClass fill:#00393F,color:#ffffff
@@ -49,10 +50,12 @@ flowchart LR
                 {{service.shortname}}({{service_title(service)}}):::srcClass --- {{service.shortname}}_{{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]]
                 {% for consumer in endpoint.consumers %}
                     {{service.shortname}}_{{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]] -. "{{endpoint.method}}" .-> {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
+                    click {{services[consumer].shortname}} "../{{services[consumer].shortname}}"
                 {%endfor%}
             {% endif %}
         {% endfor %}
     {% endif %}
+    click {{service.shortname}} "../{{ service.shortname }}"
 {% endfor %}
 
 classDef srcClass fill:#00393F,color:#ffffff

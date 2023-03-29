@@ -9,6 +9,7 @@ flowchart LR
 
     {% for event in service.api.events.consumes %}
         {{service.shortname}}_{{event.topic}}[[{{event.topic}}]] -. "{{event.type}}" .-> {{service.shortname}}({{service_title(service)}}):::srcClass
+        click {{service.shortname}} "../{{ service.shortname }}"
     {% endfor %}
 
     subgraph c1 [producers]
@@ -16,6 +17,8 @@ flowchart LR
         todo(TODO):::srcClass
     {% endfor %}
     end
+
+    click todo(TODO) "../"
 
 classDef srcClass fill:#00393F,color:#ffffff
 {% raw %}{{</ mermaid >}}{% endraw %}
