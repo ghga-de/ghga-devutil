@@ -16,12 +16,22 @@
 
 """Markdown representation of annotated services."""
 
+import re
 from datetime import datetime, timezone
 from typing import Mapping
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from ghga_devutil.core.models import AnnotatedService
+
+
+def _transform_tag(tag: str) -> str:
+    tag_match = re.match(r"^(\d+[.]\d+[.]\d)+-\d+-(\w+)-\w+$", tag)
+    if tag_match:
+        if tag_match.group(1) == "0.0.0":
+            return tag_match.group(2)
+        return tag_match.group(2)[1:]
+    return tag
 
 
 def generate_markdown(
@@ -34,6 +44,7 @@ def generate_markdown(
     )
     template = env.get_template("service_page.md.jinja")
     template.globals["cur_time"] = lambda: datetime.now(tz=timezone.utc)
+    template.globals["transform_tag"] = _transform_tag
     template.globals["service_title"] = lambda service: service.name.replace(
         "-", " "
     ).title()
