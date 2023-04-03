@@ -77,7 +77,7 @@ def service_a(
         shortname="a",
         name="service-a",
         summary="This is service A",
-        version="main",
+        version="0.0.0",
         storage=Storage(
             s3=[S3Storage(bucket="bucket_a", mode=RWRwAccessMode.READ_WRITE)]
         ),
@@ -126,7 +126,7 @@ def service_b(
         shortname="b",
         name="service-b",
         summary="This is service B",
-        version="main",
+        version="0.0.0",
         storage=Storage(
             s3=[S3Storage(bucket="bucket_b", mode=RWRwAccessMode.READ_WRITE)]
         ),

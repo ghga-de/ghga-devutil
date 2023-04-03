@@ -190,6 +190,7 @@ class BaseService(FrozenBaseModel):
     summary: str
     version: str
     storage: Storage
+    version: str
 
 
 class Service(BaseService):
