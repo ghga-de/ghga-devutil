@@ -19,7 +19,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import AnyHttpUrl, BaseModel
+from pydantic import BaseModel
 
 
 class FrozenBaseModel(BaseModel):
@@ -217,4 +217,4 @@ class Theme(BaseModel):
     """Theme for Hugo web interface"""
 
     name: str = "hugo-book"
-    url: AnyHttpUrl = "https://github.com/alex-shpak/hugo-book"
+    url: str = "https://github.com/alex-shpak/hugo-book"

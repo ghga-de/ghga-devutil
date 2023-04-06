@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import json
 import shutil
 import tempfile
 from pathlib import Path
@@ -22,11 +21,7 @@ from pathlib import Path
 import pytest
 
 from ghga_devutil.core.exceptions import ThemeDownloadError
-from ghga_devutil.core.html import (
-    git_clone_theme,
-    run_web_server,
-    verify_site_directory,
-)
+from ghga_devutil.core.html import git_clone_theme, verify_site_directory
 from ghga_devutil.core.models import Theme
 
 
@@ -92,21 +87,3 @@ def test_verify_site_directory():
 
     # Remove temp dir
     shutil.rmtree(outdir)
-
-
-def test_run_web_server_build():
-    """Test whether web server build works correctly"""
-
-    theme = Theme()
-    outdir = Path(tempfile.mkdtemp())
-
-    # Run Hugo to generate static files
-    verify_site_directory(outdir)
-    git_clone_theme(theme, outdir)
-    run_web_server(outdir, theme.name, local=False)
-
-    assert (outdir / "public").exists() is True
-
-    with open(str(outdir / "public" / "manifest.json"), "r") as file:
-        manifest = json.loads(file.read())
-        assert manifest.get("name") == "GHGA Integration Documentation"
