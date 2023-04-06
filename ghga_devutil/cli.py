@@ -51,3 +51,26 @@ def markdown(service_spec: List[Path], out_dir: Path, force: bool = False):
         core.markdown(service_spec, out_dir, force)
     except (IOError, ServiceFileValidationError) as error:
         msg.err(error)
+
+
+@cli.command(name="html")
+def html(
+    service_spec: List[Path],
+    out_dir: Path = typer.Argument(..., help="The output directory. ex. html."),
+    local: bool = typer.Option(
+        default=False, help="Run local web server or build static files"
+    ),
+    update: bool = typer.Option(
+        default=False,
+        help="Skip directory, config and theme checks. Update content only.",
+    ),
+):
+    """Annotate and generate markdowns for multiple services and save them into
+    certain directory structure then run local web server or build static files
+    for deployment. Connection is required to download the UI theme for
+    the first time.
+    """
+    try:
+        core.html(service_spec, out_dir, local, update)
+    except (IOError, ServiceFileValidationError) as error:
+        msg.err(error)

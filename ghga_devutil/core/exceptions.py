@@ -40,3 +40,10 @@ class ServiceFileValidationError(RuntimeError):
             f"The service file '{path}' could not be read. "
             f"Not a valid service specification: {val_error}"
         )
+
+
+class ThemeDownloadError(RuntimeError):
+    """Raised when unable to download the theme from Git."""
+
+    def __init__(self, val_error):
+        super().__init__(f"Unable to access or download theme: {val_error}")

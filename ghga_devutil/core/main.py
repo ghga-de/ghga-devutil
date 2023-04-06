@@ -16,12 +16,20 @@
 
 """Main program entrypoints used by the user interface"""
 
+import shutil
 from pathlib import Path
 from typing import List
 
 from ghga_devutil.core.annotate import annotate_services
+from ghga_devutil.core.html import (
+    git_clone_theme,
+    run_web_server,
+    verify_site_directory,
+)
 from ghga_devutil.core.io import load_service, write_service
 from ghga_devutil.core.markdown import generate_markdown
+
+from .models import Theme
 
 
 def markdown(service_file_paths: List[Path], outdir: Path, force: bool):
@@ -65,3 +73,39 @@ def annotate(service_file_paths: List[Path], outdir: Path, force: bool):
             out_path=(outdir / in_path.name).with_suffix(".annotated.yaml"),
             force=force,
         )
+
+
+def html(
+    service_file_paths: List[Path],
+    outdir: Path,
+    local: bool = False,
+    update: bool = False,
+):
+    """
+    Checks given directory for HTML site and create directory with config
+    file if required. Clone site theme from repository. Reads services from disk,
+    generates individual markdown files representing annotated state.
+    Locate all content with desired directory structure.
+    """
+    theme = Theme()
+
+    # If update is True do not check directory, config and theme, update only content
+    if not update:
+        # Check outdir as site folder
+        verify_site_directory(outdir=outdir)
+
+        # Handle theme
+        git_clone_theme(theme=theme, outdir=outdir)
+
+    # Remove existing services to overwrite content
+    services_dir = outdir / "content/docs/services"
+    shutil.rmtree(services_dir, ignore_errors=True)
+    services_dir.mkdir(parents=True)
+
+    # Create empty _index.md file in services directory
+    (services_dir / "_index.md").touch()
+
+    # Generate service markdowns
+    markdown(service_file_paths, services_dir, force=False)
+
+    return run_web_server(outdir, theme.name, local=local)

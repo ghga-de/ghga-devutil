@@ -19,7 +19,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel
 
 
 class FrozenBaseModel(BaseModel):
@@ -211,3 +211,10 @@ class AnnotatedService(BaseService):
 
     config: List[ConfigVariable] = []
     api: AnnotatedAPI = AnnotatedAPI()
+
+
+class Theme(BaseModel):
+    """Theme for Hugo web interface"""
+
+    name: str = "hugo-book"
+    url: AnyHttpUrl = "https://github.com/alex-shpak/hugo-book"

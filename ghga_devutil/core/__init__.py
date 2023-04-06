@@ -16,4 +16,4 @@
 
 """Core functionality"""
 
-from .main import annotate, markdown  # noqa: F401
+from .main import annotate, html, markdown  # noqa: F401
