@@ -130,6 +130,7 @@ dmypy.json
 
 # ignore VS Code settings:
 .vscode/
+.idea/
 
 # desktop settings and thumbnails
 .DS_Store
