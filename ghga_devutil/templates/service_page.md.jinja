@@ -9,6 +9,8 @@ service_name: "{{ service.name }}"
 
 # {{ service_title(service) }}
 
+`{{ service.version }}`
+
 [ghga-de/{{ service.name }}](https://github.com/ghga-de/{{ service.name }})
 
 [ghga/{{ service.name }}](https://hub.docker.com/r/ghga/{{ service.name }})
@@ -23,6 +25,8 @@ service_name: "{{ service.name }}"
 
 {% if service.api.rest.produces|length > 0 %}
 This service provides a REST API with the following endpoints:
+
+[Open in Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ghga-de/{{ service.name }}/{{ transform_tag(service.version) }}/openapi.yaml)
 
 | Method | Path | Consumers |
 | --- | --- | --- |

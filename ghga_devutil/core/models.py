@@ -188,6 +188,7 @@ class BaseService(FrozenBaseModel):
     shortname: str
     name: str
     summary: str
+    version: str
     storage: Storage
 
 
