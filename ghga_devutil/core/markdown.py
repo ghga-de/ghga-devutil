@@ -37,6 +37,9 @@ def generate_complete_diagram(services: Mapping[str, AnnotatedService]) -> str:
     ).title()
     # Get event topic set for diagrams
     template.globals["topics"] = lambda events: set(event.topic for event in events)
+    template.globals["has_any_consumer"] = lambda produces: bool(
+        sum(len(item.consumers) for item in produces)
+    )
     return template.render(services=services)
 
 

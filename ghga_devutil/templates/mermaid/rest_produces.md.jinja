@@ -2,28 +2,31 @@
 
 {% raw %}{{< mermaid >}}{% endraw %}
 
-%%{ init: { 'flowchart': { 'curve': 'cardinal' } } }%%
-flowchart LR
+%%{ init: { 'flowchart': { 'useMaxWidth': true, 'curve': 'linear' } } }%%
+flowchart RL
+
+    subgraph {{service.shortname}} [{{service_title(service)}}]
+        {% for endpoint in service.api.rest.produces %}
+            {{service.api.rest.produces.index(endpoint)}}["{{endpoint.path}}"]::::endClass
+        {%endfor%}
+    end
+    {{service.shortname}}:::srcClass
 
     {% for endpoint in service.api.rest.produces %}
-
         {% for consumer in endpoint.consumers %}
-            {{service.shortname}}({{service_title(service)}}):::srcClass --- {{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]]
-            {{service.api.rest.produces.index(endpoint)}}[["{{endpoint.path}}"]] -. "{{endpoint.method}}" .-> {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
-        {%endfor%}
 
-        subgraph c1 [consumers]
-        {% for consumer in endpoint.consumers %}
-            {{services[consumer].shortname}}({{service_title(services[consumer])}})
+            subgraph {{services[consumer].shortname}} [{{service_title(services[consumer])}}]
+            end
+            {{services[consumer].shortname}}:::srcClass
             click {{services[consumer].shortname}} "../{{services[consumer].shortname}}"
-        {%endfor%}
-        end
 
+            {{services[consumer].shortname}} --->|"{{endpoint.method}}"| {{service.api.rest.produces.index(endpoint)}}
+            {{service.api.rest.produces.index(endpoint)}}:::endClass
+        {%endfor%}
     {% endfor %}
 
-    click {{service.shortname}} "../{{ service.shortname }}"
-
-classDef srcClass fill:#00393F,color:#ffffff
+classDef srcClass fill:#CFE7CD,color:#00393F
+classDef endClass fill:#007E8C,color:#FFFFFF
 {% raw %}{{</ mermaid >}}{% endraw %}
 
 {% endif %}
