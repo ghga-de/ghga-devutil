@@ -17,11 +17,9 @@ flowchart TB
 {% for service in services %}
     {% set service = services[service] -%}
     {% if has_any_consumer(service.api.events.produces) %}
-        {% for topic in topics(service.api.events.produces) %}
-            {{service.shortname}}({{service_title(service)}}):::srcClass --> |Produces| {{service.shortname}}_{{topic}}[{{topic}}]
-        {% endfor %}
         click {{service.shortname}} "../{{ service.shortname }}"
         {% for event in service.api.events.produces %}
+            {{service.shortname}}({{service_title(service)}}):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
             {% for consumer in event.consumers %}
                 {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
                 click {{services[consumer].shortname}} "../{{services[consumer].shortname}}"

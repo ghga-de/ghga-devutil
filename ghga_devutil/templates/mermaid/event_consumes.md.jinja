@@ -13,11 +13,8 @@ flowchart LR
     {% endfor %}
     end
 
-    {% for topic in topics(service.api.events.consumes) %}
-        todo(TODO):::srcClass --> |Produces| {{service.shortname}}_{{topic}}[{{topic}}]
-    {% endfor %}
-
     {% for event in service.api.events.consumes %}
+        todo(TODO):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
         {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{service.shortname}}
         click {{service.shortname}} "../{{ service.shortname }}"
     {% endfor %}

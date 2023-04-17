@@ -11,12 +11,8 @@ flowchart LR
     {% endfor %}
     end
 
-    {% for topic in topics(service.api.events.produces) %}
-        {{service.shortname}}({{service_title(service)}}):::srcClass --> |Produces| {{service.shortname}}_{{topic}}[{{topic}}]
-    {% endfor %}
-
     {% for event in service.api.events.produces %}
-
+        {{service.shortname}}({{service_title(service)}}):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
         {% for consumer in event.consumers %}
             {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
         {%endfor%}
