@@ -1,6 +1,6 @@
 # GHGA Microservice Development and Integration Utility
 
-The GHGA Microservice Development and Integration Util (gdevutil) provides
+The GHGA Microservice Development and Integration Util (ghga-devutil) provides
 functionality to aid the process of developing and integrating the GHGA
 microservices.
 
@@ -16,7 +16,7 @@ An extensive documentation can be found [here](...) (coming soon).
 pip install git+https://github.com/ghga-de/ghga-devutil@main
 
 # Get help
-gdevutil --help
+ghga-devutil --help
 ```
 
 ## Development
