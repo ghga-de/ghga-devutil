@@ -1,0 +1,36 @@
+{% if has_any_consumer(service.api.events.produces) %}
+
+{% raw %}{{< mermaid >}}{% endraw %}
+%%{ init: { 'flowchart': { 'useMaxWidth': true, 'curve': 'linear' } } }%%
+
+flowchart LR
+
+    subgraph t1 [topics]
+    {% for topic in topics(service.api.events.produces) %}
+        {{service.shortname}}_{{topic}}[{{topic}}]:::endClass
+    {% endfor %}
+    end
+
+    {% for event in service.api.events.produces %}
+        {{service.shortname}}({{service_title(service)}}):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
+        {% for consumer in event.consumers %}
+            {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
+        {%endfor%}
+
+        subgraph c1 [consumers]
+        {% for consumer in event.consumers %}
+            {{services[consumer].shortname}}({{service_title(services[consumer])}})
+            click {{services[consumer].shortname}} "../{{services[consumer].shortname}}"
+        {%endfor%}
+        end
+        {{service.shortname}}_{{event.topic}}:::endClass
+
+    {% endfor %}
+
+    click {{service.shortname}} "../{{ service.shortname }}"
+
+classDef srcClass fill:#CFE7CD,color:#00393F
+classDef endClass fill:#007E8C,color:#FFFFFF
+{% raw %}{{</ mermaid >}}{% endraw %}
+
+{% endif %}

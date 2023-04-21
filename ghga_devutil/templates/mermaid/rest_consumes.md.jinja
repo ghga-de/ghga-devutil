@@ -1,0 +1,25 @@
+{% raw %}{{< mermaid >}}{% endraw %}
+%%{ init: { 'flowchart': { 'useMaxWidth': true, 'curve': 'linear' } } }%%
+flowchart LR
+
+    subgraph {{service.shortname}} [{{service_title(service)}}]
+    end
+    {{service.shortname}}:::srcClass
+    click {{service.shortname}} "../{{service.shortname}}"
+
+    {% for endpoint in service.api.rest.consumes %}
+
+        subgraph {{endpoint.service}} [{{service_title(services[endpoint.service])}}]
+            {{service.api.rest.consumes.index(endpoint)}}["{{endpoint.path}}"]
+        end
+        {{endpoint.service}}:::srcClass
+
+        {{service.api.rest.consumes.index(endpoint)}}:::endClass
+        click {{service.api.rest.consumes.index(endpoint)}} "../{{endpoint.service}}"
+
+        {{service.shortname}} --->|"{{endpoint.method}}"| {{service.api.rest.consumes.index(endpoint)}}
+    {% endfor %}
+
+classDef srcClass fill:#CFE7CD,color:#00393F
+classDef endClass fill:#007E8C,color:#FFFFFF
+{% raw %}{{</ mermaid >}}{% endraw %}
