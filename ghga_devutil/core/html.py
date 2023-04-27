@@ -15,9 +15,11 @@
 #
 
 """Web interface build for annotated services."""
+import http.server
 import os
 import shlex
 import shutil
+import socketserver
 from pathlib import Path
 from subprocess import PIPE, CalledProcessError, run  # nosec
 
@@ -55,13 +57,34 @@ def verify_site_directory(outdir, file_name: str = "config.toml"):
             msg.info(f"{config_path} created.")
 
 
+def set_directory_navigation(content_outdir: Path):
+    """
+    |-- <content directory>
+        |-- communications
+            |-- _index.md
+        |-- services
+            |-- _index.md
+    """
+
+    # Prepare "communications" for all-in-one service pages
+    communications_dir = content_outdir / "communications"
+    shutil.rmtree(communications_dir, ignore_errors=True)
+    communications_dir.mkdir(parents=True)
+    (communications_dir / "_index.md").touch()  # empty _index.md for nav menu
+
+    # Prepare "services" for individual service pages
+    services_dir = content_outdir / "services"
+    shutil.rmtree(services_dir, ignore_errors=True)
+    services_dir.mkdir(parents=True)
+    (services_dir / "_index.md").touch()  # empty _index.md for nav menu
+
+
 def run_web_server(outdir, theme: str, local: bool = False):
     """Start web server or build static files for deployment"""
 
+    cmd = f"hugo --theme {shlex.quote(theme)}"
     if local:
-        cmd = f"hugo server --theme {shlex.quote(theme)} --port 1313"
-    else:
-        cmd = f"hugo --theme {shlex.quote(theme)}"
+        cmd = cmd + " --baseURL /"
 
     try:
         msg.info(f"Running... `{cmd}`")
@@ -76,3 +99,24 @@ def run_web_server(outdir, theme: str, local: bool = False):
         msg.err(f"Unable to build: {error}")
     else:
         msg.info(result.stdout.decode("utf-8").strip("\n"))
+
+        if local:
+            _port = 8000
+            web_directory = str(Path(outdir / "public"))
+
+            class Handler(http.server.SimpleHTTPRequestHandler):
+                """Define a Handler that can accept a directory parameter."""
+
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, directory=web_directory, **kwargs)
+
+            try:
+                with socketserver.TCPServer(("", _port), Handler) as httpd:
+                    msg.info(
+                        f"Documentation is being served on http://localhost:{_port}."
+                    )
+                    httpd.serve_forever()
+            except KeyboardInterrupt:
+                msg.info("\nShutting down the server...")
+                httpd.shutdown()
+                msg.info("Server shut down successfully.")

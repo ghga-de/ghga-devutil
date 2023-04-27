@@ -1,38 +1,8 @@
 ---
-title: "Service Communications"
+title: "REST API Communications"
 draft: false
 weight: 1
 ---
-
-# Events
-
-The diagram summarizes the event-base communication between all microservices. Kafka is used as the message broker.
-
-
-{% raw %}{{< mermaid >}}{% endraw %}
-
-%%{ init: { 'flowchart': { 'useMaxWidth': true, 'curve': 'linear' } } }%%
-
-flowchart TB
-{% for service in services %}
-    {% set service = services[service] -%}
-    {% if has_any_consumer(service.api.events.produces) %}
-        click {{service.shortname}} "../{{ service.shortname }}"
-        {% for event in service.api.events.produces %}
-            {{service.shortname}}({{service_title(service)}}):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
-            {% for consumer in event.consumers %}
-                {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{services[consumer].shortname}}({{service_title(services[consumer])}}):::srcClass
-                click {{services[consumer].shortname}} "../{{services[consumer].shortname}}"
-            {%endfor%}
-            {{service.shortname}}_{{event.topic}}:::endClass
-        {% endfor %}
-    {% endif %}
-{% endfor %}
-
-classDef srcClass fill:#CFE7CD,color:#00393F
-classDef endClass fill:#007E8C,color:#FFFFFF
-{% raw %}{{</ mermaid >}}{% endraw %}
-
 
 # REST API
 
