@@ -34,13 +34,15 @@ def _transform_tag(tag: str) -> str:
     return tag
 
 
-def generate_complete_diagram(services: Mapping[str, AnnotatedService]) -> str:
-    """Generates diagram page markdown from services"""
+def generate_communication_markdown(
+    services: Mapping[str, AnnotatedService], template_name: str
+) -> str:
+    """Generates service communication markdowns from annotated services"""
     # Load jinja2 template
     env = Environment(
         loader=PackageLoader("ghga_devutil"), autoescape=select_autoescape()
     )
-    template = env.get_template("service_communications.md.jinja")
+    template = env.get_template(f"{template_name}.md.jinja")
     template.globals["cur_time"] = lambda: datetime.now(tz=timezone.utc)
     template.globals["service_title"] = lambda service: service.name.replace(
         "-", " "
@@ -53,7 +55,7 @@ def generate_complete_diagram(services: Mapping[str, AnnotatedService]) -> str:
     return template.render(services=services)
 
 
-def generate_markdown(
+def generate_service_markdown(
     services: Mapping[str, AnnotatedService], service_key: str
 ) -> str:
     """Generates markdown from service"""

@@ -14,16 +14,22 @@ flowchart LR
     end
 
     {% for event in service.api.events.consumes %}
-        todo(TODO):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
+        {% for producer in event.producers %}
+                {{producer}}({{service_title(services[producer])}}) --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
+        {% endfor %}
         {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{service.shortname}}
         click {{service.shortname}} "../{{ service.shortname }}"
     {% endfor %}
 
-    {% for endpoint in service.api.events.consumes %}
-        todo(TODO):::srcClass
-    {% endfor %}
-    click todo(TODO) "../"
 
+    subgraph p1 [producers]
+        {% for event in service.api.events.consumes %}
+            {% for producer in event.producers %}
+                {{producer}}({{service_title(services[producer])}}):::srcClass
+                click {{producer}} "../{{producer}}"
+            {% endfor %}
+        {% endfor %}
+    end
 classDef srcClass fill:#CFE7CD,color:#00393F
 classDef endClass fill:#007E8C,color:#FFFFFF
 {% raw %}{{</ mermaid >}}{% endraw %}
