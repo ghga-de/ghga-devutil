@@ -27,7 +27,7 @@ from ghga_devutil.core.html import (
     verify_site_directory,
 )
 from ghga_devutil.core.io import load_service, write_service
-from ghga_devutil.core.markdown import generate_markdown
+from ghga_devutil.core.markdown import generate_complete_diagram, generate_markdown
 
 from .models import Theme
 
@@ -53,6 +53,12 @@ def markdown(service_file_paths: List[Path], outdir: Path, force: bool):
                     services=ann_services_map, service_key=ann_service.shortname
                 )
             )
+
+    diagram_out_path = (outdir / "service_communications").with_suffix(".md")
+    if not diagram_out_path.exists() or force:
+        diagram_out_path.write_text(
+            generate_complete_diagram(services=ann_services_map)
+        )
 
 
 def annotate(service_file_paths: List[Path], outdir: Path, force: bool):

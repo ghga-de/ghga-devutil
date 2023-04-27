@@ -1,0 +1,29 @@
+{% raw %}{{< mermaid >}}{% endraw %}
+
+%%{ init: { 'flowchart': { 'useMaxWidth': true, 'curve': 'linear' } } }%%
+
+flowchart LR
+    subgraph c1 [consumer]
+        {{service.shortname}}({{service_title(service)}}):::srcClass
+    end
+
+    subgraph t1 [topics]
+    {% for topic in topics(service.api.events.consumes) %}
+        {{service.shortname}}_{{topic}}[{{topic}}]:::endClass
+    {% endfor %}
+    end
+
+    {% for event in service.api.events.consumes %}
+        todo(TODO):::srcClass --> |"{{event.type}}"| {{service.shortname}}_{{event.topic}}[{{event.topic}}]
+        {{service.shortname}}_{{event.topic}}[{{event.topic}}] --> |"{{event.type}}"| {{service.shortname}}
+        click {{service.shortname}} "../{{ service.shortname }}"
+    {% endfor %}
+
+    {% for endpoint in service.api.events.consumes %}
+        todo(TODO):::srcClass
+    {% endfor %}
+    click todo(TODO) "../"
+
+classDef srcClass fill:#CFE7CD,color:#00393F
+classDef endClass fill:#007E8C,color:#FFFFFF
+{% raw %}{{</ mermaid >}}{% endraw %}
