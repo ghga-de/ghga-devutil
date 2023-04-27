@@ -5,6 +5,12 @@
 
 flowchart LR
 
+    subgraph p1 [producer]
+    {% for topic in topics(service.api.events.produces) %}
+        {{service.shortname}}
+    {% endfor %}
+    end
+
     subgraph t1 [topics]
     {% for topic in topics(service.api.events.produces) %}
         {{service.shortname}}_{{topic}}[{{topic}}]:::endClass
